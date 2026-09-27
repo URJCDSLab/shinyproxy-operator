@@ -33,6 +33,11 @@ apps:
                           - "/other/nested/path/other-sub-path2"
                   - handle:
                       - handler: "reverse_proxy"
+                        headers:
+                          request:
+                            set:
+                              X-Forwarded-Proto:
+                                - "{http.request.header.X-Forwarded-Proto}"
                         stream_close_delay: 172800000000000
                         upstreams:
                           - dial: "#CONTAINER_IP_2#:8080"
@@ -104,6 +109,11 @@ apps:
                           - "/some-path/my-sub-path3"
                   - handle:
                       - handler: "reverse_proxy"
+                        headers:
+                          request:
+                            set:
+                              X-Forwarded-Proto:
+                                - "{http.request.header.X-Forwarded-Proto}"
                         stream_close_delay: 172800000000000
                         upstreams:
                           - dial: "#CONTAINER_IP#:8080"

@@ -127,6 +127,13 @@ class CaddyConfig(private val dockerClient: DockerClient, mainDataDir: Path, con
                     "routes" to generateRedirects(shinyProxy) + listOf(mapOf(
                         "handle" to listOf(mapOf(
                             "handler" to "reverse_proxy",
+                            "headers" to mapOf(
+                                "request" to mapOf(
+                                    "set" to mapOf(
+                                        "X-Forwarded-Proto" to listOf("{http.request.header.X-Forwarded-Proto}")
+                                    )
+                                )
+                            ),
                             "stream_close_delay" to 172800000000000,
                             "upstreams" to ipAddress.map { mapOf("dial" to "${it}:8080") }
                         ))
@@ -149,6 +156,13 @@ class CaddyConfig(private val dockerClient: DockerClient, mainDataDir: Path, con
                     "routes" to listOf(mapOf(
                         "handle" to listOf(mapOf(
                             "handler" to "reverse_proxy",
+                            "headers" to mapOf(
+                                "request" to mapOf(
+                                    "set" to mapOf(
+                                        "X-Forwarded-Proto" to listOf("{http.request.header.X-Forwarded-Proto}")
+                                    )
+                                )
+                            ),
                             "stream_close_delay" to 172800000000000,
                             "upstreams" to listOf(mapOf("dial" to "${craneServer.ip}:8080"))
                         ))

@@ -16,6 +16,15 @@
                       "handle": [
                         {
                           "handler": "reverse_proxy",
+                          "headers": {
+                            "request": {
+                              "set": {
+                                "X-Forwarded-Proto": [
+                                  "{http.request.header.X-Forwarded-Proto}"
+                                ]
+                              }
+                            }
+                          },
                           "stream_close_delay": 172800000000000,
                           "upstreams": [
                             {
@@ -49,6 +58,15 @@
                       "handle": [
                         {
                           "handler": "reverse_proxy",
+                          "headers": {
+                            "request": {
+                              "set": {
+                                "X-Forwarded-Proto": [
+                                  "{http.request.header.X-Forwarded-Proto}"
+                                ]
+                              }
+                            }
+                          },
                           "stream_close_delay": 172800000000000,
                           "upstreams": [
                             {

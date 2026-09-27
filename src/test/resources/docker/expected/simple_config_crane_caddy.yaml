@@ -11,6 +11,11 @@ apps:
                 routes:
                   - handle:
                       - handler: "reverse_proxy"
+                        headers:
+                          request:
+                            set:
+                              X-Forwarded-Proto:
+                                - "{http.request.header.X-Forwarded-Proto}"
                         stream_close_delay: 172800000000000
                         upstreams:
                           - dial: "#CRANE_IP#:8080"
@@ -25,6 +30,11 @@ apps:
                 routes:
                   - handle:
                       - handler: "reverse_proxy"
+                        headers:
+                          request:
+                            set:
+                              X-Forwarded-Proto:
+                                - "{http.request.header.X-Forwarded-Proto}"
                         stream_close_delay: 172800000000000
                         upstreams:
                           - dial: "#CONTAINER_IP#:8080"
