@@ -297,11 +297,33 @@ class DockerOrchestrator(channel: Channel<ShinyProxyEvent>,
                         .build())
                 }
 
+                val env = mutableListOf(
+                    "PROXY_VERSION=${version}",
+                    "PROXY_REALM_ID=${shinyProxy.realmId}",
+                    "SPRING_CONFIG_IMPORT=/opt/shinyproxy/generated.yml"
+                )
+
+                for ((key, value) in System.getenv().entries) {
+                    if (key.startsWith("SHINYPROXY_ENV_")) {
+                        val targetKey = key.removePrefix("SHINYPROXY_ENV_")
+                        if (targetKey.isEmpty()) {
+                            logger.warn { "${logPrefix(shinyProxyInstance)} [Docker] Ignoring invalid environment variable with empty key: $key" }
+                            continue
+                        }
+                        if (value.contains('\n') || value.contains('\r')) {
+                            logger.warn { "${logPrefix(shinyProxyInstance)} [Docker] Skipping environment variable '$targetKey' due to invalid value containing newline characters" }
+                            continue
+                        }
+                        env.add("$targetKey=$value")
+                        logger.info { "${logPrefix(shinyProxyInstance)} [Docker] Passing environment variable '$targetKey' to ShinyProxy container" }
+                    }
+                }
+
                 val containerConfig = ContainerConfig.builder()
                     .image(shinyProxy.image)
                     .hostConfig(hostConfigBuilder.build())
                     .labels(shinyProxy.labels + LabelFactory.labelsForShinyProxyInstance(shinyProxyInstance, version))
-                    .env("PROXY_VERSION=${version}", "PROXY_REALM_ID=${shinyProxy.realmId}", "SPRING_CONFIG_IMPORT=/opt/shinyproxy/generated.yml")
+                    .env(env)
                     .user(dataDirUid.toString())
                     .build()
 
